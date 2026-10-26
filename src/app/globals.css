@@ -1,0 +1,73 @@
+/* 1. Load Tailwind's base, components and utilities */
+@import "tailwindcss";
+
+/* 2. Load the HeroUI plugin we created in hero.ts */
+@plugin "./hero.ts";
+
+/* 3. Tell Tailwind to scan HeroUI's files for class names,
+      otherwise HeroUI components would be missing their styles */
+@source "../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
+
+/* 4. Dark mode support (we don't use it, but HeroUI expects this variant) */
+@custom-variant dark (&:is(.dark *));
+
+/* 5. Our own design tokens. Tailwind v4 turns each --color-* variable
+      into utility classes, e.g. bg-brand, text-up, bg-surface. */
+@theme inline {
+  /* Font: set by next/font in layout.tsx through --font-bengali */
+  --font-sans: var(--font-bengali), system-ui, sans-serif;
+
+  /* Brand green (logo, buttons, active category pill) */
+  --color-brand: #078a40;
+  --color-brand-dark: #056c32;
+  --color-brand-soft: #e6f4ec;
+
+  /* Page background (the light green-gray from the Figma) */
+  --color-surface: #f1f5f1;
+
+  /* Price colors, following the preview:
+     price RISE = red, price FALL = green, flat = gray */
+  --color-up: #d92d20;
+  --color-up-soft: #fdecea;
+  --color-down: #12a150;
+  --color-down-soft: #e8f6ee;
+  --color-flat: #6b7280;
+  --color-flat-soft: #f1f2f4;
+}
+
+/* Smooth scrolling makes the hero CTA (#সব-পণ্য anchor) glide down */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-surface);
+  color: #1a2420;
+}
+
+/* ---------- Ticker animation ---------- */
+/* Tailwind v4: keyframes and the animation token go inside @theme.
+   This creates the utility class `animate-marquee`. */
+@theme {
+  --animate-marquee: marquee 120s linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      /* The ticker content is rendered TWICE side by side.
+         Moving left by exactly 50% (one full copy) and then restarting
+         looks like one endless strip, because copy 2 is identical to copy 1. */
+      transform: translateX(-50%);
+    }
+  }
+}
+
+/* Hide the scrollbar on the category row but keep it scrollable (mobile swipe) */
+.no-scrollbar {
+  scrollbar-width: none; /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
